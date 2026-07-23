@@ -1,6 +1,7 @@
 import java.util.PriorityQueue;
 
 class ListNode {
+
     int val;
     ListNode next;
 
@@ -24,6 +25,7 @@ class Solution {
                 new PriorityQueue<>((a, b) -> a.val - b.val);
 
         for (ListNode node : lists) {
+
             if (node != null)
                 pq.offer(node);
         }

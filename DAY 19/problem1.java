@@ -2,27 +2,46 @@ import java.util.*;
 
 class Solution {
 
-    public int[][] kClosest(int[][] points, int k) {
+    public List<List<String>> partition(String s) {
 
-        PriorityQueue<int[]> pq =
-                new PriorityQueue<>(
-                        (a, b) ->
-                                (b[0] * b[0] + b[1] * b[1]) -
-                                (a[0] * a[0] + a[1] * a[1]));
-
-        for (int[] point : points) {
-
-            pq.offer(point);
-
-            if (pq.size() > k)
-                pq.poll();
-        }
-
-        int[][] result = new int[k][2];
-
-        for (int i = 0; i < k; i++)
-            result[i] = pq.poll();
+        List<List<String>> result = new ArrayList<>();
+        backtrack(result, new ArrayList<>(), s, 0);
 
         return result;
+    }
+
+    private void backtrack(List<List<String>> result,
+                           List<String> temp,
+                           String s,
+                           int start) {
+
+        if (start == s.length()) {
+            result.add(new ArrayList<>(temp));
+            return;
+        }
+
+        for (int end = start; end < s.length(); end++) {
+
+            if (isPalindrome(s, start, end)) {
+
+                temp.add(s.substring(start, end + 1));
+                backtrack(result, temp, s, end + 1);
+                temp.remove(temp.size() - 1);
+            }
+        }
+    }
+
+    private boolean isPalindrome(String s, int left, int right) {
+
+        while (left < right) {
+
+            if (s.charAt(left) != s.charAt(right))
+                return false;
+
+            left++;
+            right--;
+        }
+
+        return true;
     }
 }

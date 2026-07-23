@@ -2,36 +2,81 @@ import java.util.*;
 
 class Solution {
 
-    public List<String> restoreIpAddresses(String s) {
+    class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        String word;
+    }
+
+    public List<String> findWords(char[][] board, String[] words) {
+
+        TrieNode root = buildTrie(words);
 
         List<String> result = new ArrayList<>();
-        backtrack(result, s, 0, new ArrayList<>());
+
+        for (int i = 0; i < board.length; i++) {
+
+            for (int j = 0; j < board[0].length; j++) {
+
+                dfs(board, i, j, root, result);
+            }
+        }
 
         return result;
     }
 
-    private void backtrack(List<String> result, String s,
-                           int start, List<String> path) {
+    private TrieNode buildTrie(String[] words) {
 
-        if (path.size() == 4 && start == s.length()) {
-            result.add(String.join(".", path));
-            return;
+        TrieNode root = new TrieNode();
+
+        for (String word : words) {
+
+            TrieNode node = root;
+
+            for (char c : word.toCharArray()) {
+
+                int index = c - 'a';
+
+                if (node.children[index] == null)
+                    node.children[index] = new TrieNode();
+
+                node = node.children[index];
+            }
+
+            node.word = word;
         }
 
-        if (path.size() == 4)
+        return root;
+    }
+
+    private void dfs(char[][] board,
+                     int row,
+                     int col,
+                     TrieNode node,
+                     List<String> result) {
+
+        if (row < 0 || col < 0 ||
+            row >= board.length || col >= board[0].length)
             return;
 
-        for (int len = 1; len <= 3 && start + len <= s.length(); len++) {
+        char c = board[row][col];
 
-            String part = s.substring(start, start + len);
+        if (c == '#' || node.children[c - 'a'] == null)
+            return;
 
-            if ((part.startsWith("0") && part.length() > 1) ||
-                Integer.parseInt(part) > 255)
-                continue;
+        node = node.children[c - 'a'];
 
-            path.add(part);
-            backtrack(result, s, start + len, path);
-            path.remove(path.size() - 1);
+        if (node.word != null) {
+            result.add(node.word);
+            node.word = null;
         }
+
+        board[row][col] = '#';
+
+        dfs(board, row + 1, col, node, result);
+        dfs(board, row - 1, col, node, result);
+        dfs(board, row, col + 1, node, result);
+        dfs(board, row, col - 1, node, result);
+
+        board[row][col] = c;
     }
 }

@@ -1,35 +1,56 @@
-import java.util.*;
+class Solution {
 
-class SmallestInfiniteSet {
-
-    private PriorityQueue<Integer> pq;
-    private Set<Integer> set;
-    private int current;
-
-    public SmallestInfiniteSet() {
-
-        pq = new PriorityQueue<>();
-        set = new HashSet<>();
-        current = 1;
+    public void solveSudoku(char[][] board) {
+        solve(board);
     }
 
-    public int popSmallest() {
+    private boolean solve(char[][] board) {
 
-        if (!pq.isEmpty()) {
+        for (int i = 0; i < 9; i++) {
 
-            int num = pq.poll();
-            set.remove(num);
-            return num;
+            for (int j = 0; j < 9; j++) {
+
+                if (board[i][j] == '.') {
+
+                    for (char c = '1'; c <= '9'; c++) {
+
+                        if (isValid(board, i, j, c)) {
+
+                            board[i][j] = c;
+
+                            if (solve(board))
+                                return true;
+
+                            board[i][j] = '.';
+                        }
+                    }
+
+                    return false;
+                }
+            }
         }
 
-        return current++;
+        return true;
     }
 
-    public void addBack(int num) {
+    private boolean isValid(char[][] board,
+                            int row,
+                            int col,
+                            char c) {
 
-        if (num < current && !set.contains(num)) {
-            pq.offer(num);
-            set.add(num);
+        for (int i = 0; i < 9; i++) {
+
+            if (board[row][i] == c)
+                return false;
+
+            if (board[i][col] == c)
+                return false;
+
+            if (board[3 * (row / 3) + i / 3]
+                    [3 * (col / 3) + i % 3] == c)
+                return false;
         }
+
+        return true;
     }
 }

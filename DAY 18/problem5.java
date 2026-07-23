@@ -6,22 +6,22 @@ class Solution {
 
     private boolean solve(char[][] board) {
 
-        for (int i = 0; i < 9; i++) {
+        for (int row = 0; row < 9; row++) {
 
-            for (int j = 0; j < 9; j++) {
+            for (int col = 0; col < 9; col++) {
 
-                if (board[i][j] == '.') {
+                if (board[row][col] == '.') {
 
                     for (char c = '1'; c <= '9'; c++) {
 
-                        if (isValid(board, i, j, c)) {
+                        if (isValid(board, row, col, c)) {
 
-                            board[i][j] = c;
+                            board[row][col] = c;
 
                             if (solve(board))
                                 return true;
 
-                            board[i][j] = '.';
+                            board[row][col] = '.';
                         }
                     }
 
@@ -33,10 +33,7 @@ class Solution {
         return true;
     }
 
-    private boolean isValid(char[][] board,
-                            int row,
-                            int col,
-                            char c) {
+    private boolean isValid(char[][] board, int row, int col, char c) {
 
         for (int i = 0; i < 9; i++) {
 

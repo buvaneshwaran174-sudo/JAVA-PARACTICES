@@ -1,33 +1,53 @@
 class Solution {
 
-    public int minDistance(String word1, String word2) {
+    public void solveSudoku(char[][] board) {
+        solve(board);
+    }
 
-        int m = word1.length();
-        int n = word2.length();
+    private boolean solve(char[][] board) {
 
-        int[][] dp = new int[m + 1][n + 1];
+        for (int row = 0; row < 9; row++) {
 
-        for (int i = 0; i <= m; i++)
-            dp[i][0] = i;
+            for (int col = 0; col < 9; col++) {
 
-        for (int j = 0; j <= n; j++)
-            dp[0][j] = j;
+                if (board[row][col] == '.') {
 
-        for (int i = 1; i <= m; i++) {
+                    for (char c = '1'; c <= '9'; c++) {
 
-            for (int j = 1; j <= n; j++) {
+                        if (isValid(board, row, col, c)) {
 
-                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else {
+                            board[row][col] = c;
 
-                    dp[i][j] = 1 + Math.min(
-                            dp[i - 1][j - 1],
-                            Math.min(dp[i - 1][j], dp[i][j - 1]));
+                            if (solve(board))
+                                return true;
+
+                            board[row][col] = '.';
+                        }
+                    }
+
+                    return false;
                 }
             }
         }
 
-        return dp[m][n];
+        return true;
+    }
+
+    private boolean isValid(char[][] board, int row, int col, char c) {
+
+        for (int i = 0; i < 9; i++) {
+
+            if (board[row][i] == c)
+                return false;
+
+            if (board[i][col] == c)
+                return false;
+
+            if (board[3 * (row / 3) + i / 3]
+                    [3 * (col / 3) + i % 3] == c)
+                return false;
+        }
+
+        return true;
     }
 }

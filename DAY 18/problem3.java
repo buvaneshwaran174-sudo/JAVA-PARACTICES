@@ -1,41 +1,49 @@
+import java.util.*;
+
 class Solution {
 
-    public boolean exist(char[][] board, String word) {
+    public int minCostConnectPoints(int[][] points) {
 
-        for (int i = 0; i < board.length; i++) {
+        int n = points.length;
 
-            for (int j = 0; j < board[0].length; j++) {
+        boolean[] visited = new boolean[n];
 
-                if (dfs(board, word, i, j, 0))
-                    return true;
+        PriorityQueue<int[]> pq =
+                new PriorityQueue<>((a, b) -> a[0] - b[0]);
+
+        pq.offer(new int[]{0, 0});
+
+        int cost = 0;
+        int edges = 0;
+
+        while (edges < n) {
+
+            int[] current = pq.poll();
+
+            int weight = current[0];
+            int node = current[1];
+
+            if (visited[node])
+                continue;
+
+            visited[node] = true;
+
+            cost += weight;
+            edges++;
+
+            for (int i = 0; i < n; i++) {
+
+                if (!visited[i]) {
+
+                    int distance =
+                            Math.abs(points[node][0] - points[i][0]) +
+                            Math.abs(points[node][1] - points[i][1]);
+
+                    pq.offer(new int[]{distance, i});
+                }
             }
         }
 
-        return false;
-    }
-
-    private boolean dfs(char[][] board, String word,
-                        int r, int c, int index) {
-
-        if (index == word.length())
-            return true;
-
-        if (r < 0 || c < 0 || r >= board.length ||
-            c >= board[0].length ||
-            board[r][c] != word.charAt(index))
-            return false;
-
-        char temp = board[r][c];
-        board[r][c] = '#';
-
-        boolean found =
-                dfs(board, word, r + 1, c, index + 1) ||
-                dfs(board, word, r - 1, c, index + 1) ||
-                dfs(board, word, r, c + 1, index + 1) ||
-                dfs(board, word, r, c - 1, index + 1);
-
-        board[r][c] = temp;
-
-        return found;
+        return cost;
     }
 }

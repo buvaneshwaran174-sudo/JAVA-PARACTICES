@@ -1,58 +1,23 @@
-import java.util.*;
+import java.util.Arrays;
 
 class Solution {
 
-    public int ladderLength(String beginWord,
-                            String endWord,
-                            List<String> wordList) {
+    public int leastInterval(char[] tasks, int n) {
 
-        Set<String> set = new HashSet<>(wordList);
+        int[] count = new int[26];
 
-        if (!set.contains(endWord))
-            return 0;
+        for (char task : tasks)
+            count[task - 'A']++;
 
-        Queue<String> queue = new LinkedList<>();
-        queue.offer(beginWord);
+        Arrays.sort(count);
 
-        int level = 1;
+        int max = count[25] - 1;
+        int idle = max * n;
 
-        while (!queue.isEmpty()) {
-
-            int size = queue.size();
-
-            for (int i = 0; i < size; i++) {
-
-                String word = queue.poll();
-
-                if (word.equals(endWord))
-                    return level;
-
-                char[] arr = word.toCharArray();
-
-                for (int j = 0; j < arr.length; j++) {
-
-                    char original = arr[j];
-
-                    for (char c = 'a'; c <= 'z'; c++) {
-
-                        arr[j] = c;
-
-                        String next = new String(arr);
-
-                        if (set.contains(next)) {
-
-                            queue.offer(next);
-                            set.remove(next);
-                        }
-                    }
-
-                    arr[j] = original;
-                }
-            }
-
-            level++;
+        for (int i = 24; i >= 0; i--) {
+            idle -= Math.min(max, count[i]);
         }
 
-        return 0;
+        return idle > 0 ? idle + tasks.length : tasks.length;
     }
 }

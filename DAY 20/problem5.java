@@ -1,30 +1,35 @@
 import java.util.*;
 
-class MedianFinder {
+class SmallestInfiniteSet {
 
-    private PriorityQueue<Integer> small; // Max Heap
-    private PriorityQueue<Integer> large; // Min Heap
+    private PriorityQueue<Integer> pq;
+    private Set<Integer> set;
+    private int current;
 
-    public MedianFinder() {
-        small = new PriorityQueue<>(Collections.reverseOrder());
-        large = new PriorityQueue<>();
+    public SmallestInfiniteSet() {
+
+        pq = new PriorityQueue<>();
+        set = new HashSet<>();
+        current = 1;
     }
 
-    public void addNum(int num) {
+    public int popSmallest() {
 
-        small.offer(num);
-        large.offer(small.poll());
+        if (!pq.isEmpty()) {
 
-        if (large.size() > small.size()) {
-            small.offer(large.poll());
+            int num = pq.poll();
+            set.remove(num);
+            return num;
         }
+
+        return current++;
     }
 
-    public double findMedian() {
+    public void addBack(int num) {
 
-        if (small.size() > large.size())
-            return small.peek();
-
-        return (small.peek() + large.peek()) / 2.0;
+        if (num < current && !set.contains(num)) {
+            pq.offer(num);
+            set.add(num);
+        }
     }
 }

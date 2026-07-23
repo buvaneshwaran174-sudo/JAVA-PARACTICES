@@ -1,28 +1,54 @@
-import java.util.PriorityQueue;
+import java.util.Arrays;
 
 class Solution {
 
-    public int furthestBuilding(int[] heights, int bricks, int ladders) {
+    public boolean canPartitionKSubsets(int[] nums, int k) {
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        int sum = 0;
 
-        for (int i = 0; i < heights.length - 1; i++) {
+        for (int num : nums)
+            sum += num;
 
-            int diff = heights[i + 1] - heights[i];
+        if (sum % k != 0)
+            return false;
 
-            if (diff > 0) {
+        Arrays.sort(nums);
 
-                pq.offer(diff);
+        boolean[] used = new boolean[nums.length];
 
-                if (pq.size() > ladders) {
-                    bricks -= pq.poll();
-                }
+        return backtrack(nums, used, k, 0,
+                sum / k, nums.length - 1);
+    }
 
-                if (bricks < 0)
-                    return i;
-            }
+    private boolean backtrack(int[] nums,
+                              boolean[] used,
+                              int k,
+                              int currentSum,
+                              int target,
+                              int index) {
+
+        if (k == 1)
+            return true;
+
+        if (currentSum == target)
+            return backtrack(nums, used, k - 1,
+                    0, target, nums.length - 1);
+
+        for (int i = index; i >= 0; i--) {
+
+            if (used[i] || currentSum + nums[i] > target)
+                continue;
+
+            used[i] = true;
+
+            if (backtrack(nums, used, k,
+                    currentSum + nums[i],
+                    target, i - 1))
+                return true;
+
+            used[i] = false;
         }
 
-        return heights.length - 1;
+        return false;
     }
 }

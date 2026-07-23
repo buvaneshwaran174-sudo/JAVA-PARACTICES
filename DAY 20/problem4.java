@@ -1,49 +1,29 @@
-import java.util.PriorityQueue;
-
-class ListNode {
-
-    int val;
-    ListNode next;
-
-    ListNode() {}
-
-    ListNode(int val) {
-        this.val = val;
-    }
-
-    ListNode(int val, ListNode next) {
-        this.val = val;
-        this.next = next;
-    }
-}
+import java.util.*;
 
 class Solution {
 
-    public ListNode mergeKLists(ListNode[] lists) {
+    public String frequencySort(String s) {
 
-        PriorityQueue<ListNode> pq =
-                new PriorityQueue<>((a, b) -> a.val - b.val);
+        Map<Character, Integer> map = new HashMap<>();
 
-        for (ListNode node : lists) {
+        for (char c : s.toCharArray())
+            map.put(c, map.getOrDefault(c, 0) + 1);
 
-            if (node != null)
-                pq.offer(node);
-        }
+        PriorityQueue<Character> pq =
+                new PriorityQueue<>((a, b) -> map.get(b) - map.get(a));
 
-        ListNode dummy = new ListNode(0);
-        ListNode current = dummy;
+        pq.addAll(map.keySet());
+
+        StringBuilder sb = new StringBuilder();
 
         while (!pq.isEmpty()) {
 
-            ListNode node = pq.poll();
+            char c = pq.poll();
 
-            current.next = node;
-            current = current.next;
-
-            if (node.next != null)
-                pq.offer(node.next);
+            for (int i = 0; i < map.get(c); i++)
+                sb.append(c);
         }
 
-        return dummy.next;
+        return sb.toString();
     }
 }

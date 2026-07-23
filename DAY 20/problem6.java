@@ -1,35 +1,28 @@
+import java.util.PriorityQueue;
+
 class Solution {
 
-    public int maxCoins(int[] nums) {
+    public int furthestBuilding(int[] heights, int bricks, int ladders) {
 
-        int n = nums.length;
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        int[] arr = new int[n + 2];
-        arr[0] = 1;
-        arr[n + 1] = 1;
+        for (int i = 0; i < heights.length - 1; i++) {
 
-        for (int i = 0; i < n; i++)
-            arr[i + 1] = nums[i];
+            int diff = heights[i + 1] - heights[i];
 
-        int[][] dp = new int[n + 2][n + 2];
+            if (diff > 0) {
 
-        for (int len = 1; len <= n; len++) {
+                pq.offer(diff);
 
-            for (int left = 1; left <= n - len + 1; left++) {
-
-                int right = left + len - 1;
-
-                for (int k = left; k <= right; k++) {
-
-                    dp[left][right] = Math.max(
-                            dp[left][right],
-                            arr[left - 1] * arr[k] * arr[right + 1]
-                            + dp[left][k - 1]
-                            + dp[k + 1][right]);
+                if (pq.size() > ladders) {
+                    bricks -= pq.poll();
                 }
+
+                if (bricks < 0)
+                    return i;
             }
         }
 
-        return dp[1][n];
+        return heights.length - 1;
     }
 }

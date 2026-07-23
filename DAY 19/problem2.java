@@ -1,47 +1,37 @@
-import java.util.PriorityQueue;
-
-class ListNode {
-    int val;
-    ListNode next;
-
-    ListNode() {}
-
-    ListNode(int val) {
-        this.val = val;
-    }
-
-    ListNode(int val, ListNode next) {
-        this.val = val;
-        this.next = next;
-    }
-}
+import java.util.*;
 
 class Solution {
 
-    public ListNode mergeKLists(ListNode[] lists) {
+    public List<String> restoreIpAddresses(String s) {
 
-        PriorityQueue<ListNode> pq =
-                new PriorityQueue<>((a, b) -> a.val - b.val);
+        List<String> result = new ArrayList<>();
+        backtrack(result, s, 0, new ArrayList<>());
 
-        for (ListNode node : lists) {
-            if (node != null)
-                pq.offer(node);
+        return result;
+    }
+
+    private void backtrack(List<String> result, String s,
+                           int start, List<String> path) {
+
+        if (path.size() == 4 && start == s.length()) {
+            result.add(String.join(".", path));
+            return;
         }
 
-        ListNode dummy = new ListNode(0);
-        ListNode current = dummy;
+        if (path.size() == 4)
+            return;
 
-        while (!pq.isEmpty()) {
+        for (int len = 1; len <= 3 && start + len <= s.length(); len++) {
 
-            ListNode node = pq.poll();
+            String part = s.substring(start, start + len);
 
-            current.next = node;
-            current = current.next;
+            if ((part.startsWith("0") && part.length() > 1) ||
+                Integer.parseInt(part) > 255)
+                continue;
 
-            if (node.next != null)
-                pq.offer(node.next);
+            path.add(part);
+            backtrack(result, s, start + len, path);
+            path.remove(path.size() - 1);
         }
-
-        return dummy.next;
     }
 }

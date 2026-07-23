@@ -1,23 +1,41 @@
-import java.util.Arrays;
-
 class Solution {
 
-    public int leastInterval(char[] tasks, int n) {
+    public boolean exist(char[][] board, String word) {
 
-        int[] count = new int[26];
+        for (int i = 0; i < board.length; i++) {
 
-        for (char task : tasks)
-            count[task - 'A']++;
+            for (int j = 0; j < board[0].length; j++) {
 
-        Arrays.sort(count);
-
-        int max = count[25] - 1;
-        int idle = max * n;
-
-        for (int i = 24; i >= 0; i--) {
-            idle -= Math.min(max, count[i]);
+                if (dfs(board, word, i, j, 0))
+                    return true;
+            }
         }
 
-        return idle > 0 ? idle + tasks.length : tasks.length;
+        return false;
+    }
+
+    private boolean dfs(char[][] board, String word,
+                        int r, int c, int index) {
+
+        if (index == word.length())
+            return true;
+
+        if (r < 0 || c < 0 || r >= board.length ||
+            c >= board[0].length ||
+            board[r][c] != word.charAt(index))
+            return false;
+
+        char temp = board[r][c];
+        board[r][c] = '#';
+
+        boolean found =
+                dfs(board, word, r + 1, c, index + 1) ||
+                dfs(board, word, r - 1, c, index + 1) ||
+                dfs(board, word, r, c + 1, index + 1) ||
+                dfs(board, word, r, c - 1, index + 1);
+
+        board[r][c] = temp;
+
+        return found;
     }
 }
